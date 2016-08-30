@@ -12,10 +12,12 @@ FenetrePrincipale::FenetrePrincipale()
     // Groupe : Définition de la classe
     nom = new QLineEdit;
     classeMere = new QLineEdit;
+    nameSpace = new QLineEdit;
 
     QFormLayout *definitionLayout = new QFormLayout;
     definitionLayout->addRow("&Nom :",nom);
-    definitionLayout->addRow("Classe &mère :",classeMere);
+    definitionLayout->addRow("Classe &mère :",classeMere);    
+    definitionLayout->addRow("Namespace :",nameSpace);
 
     QGroupBox *groupDefinition = new QGroupBox("Définition de la classe");
     groupDefinition->setLayout(definitionLayout);
@@ -129,6 +131,12 @@ QString FenetrePrincipale::genererH()
         code += "#define HEADER_" + nom->text().toUpper() + "\n\n\n";
     }
 
+    // Le namespace
+    if (!nameSpace->text().isEmpty())
+    {
+        code += "namespace " + nameSpace->text()+"{\n";
+    }
+
     code += "class " + nom->text();
 
     // L'heritage
@@ -161,6 +169,10 @@ QString FenetrePrincipale::genererH()
     }
     code += "};\n\n";
 
+    if (!nameSpace->text().isEmpty())
+    {
+        code += "}\n";
+    }
     if (protections->isChecked())
     {
         code += "#endif\n";
@@ -176,15 +188,23 @@ QString FenetrePrincipale::genererCpp()
     // L'include du header
     code += "#include \"" + nom->text() + ".h\"\n\n";
 
+    // le namespace
+    if(!nameSpace->text().isEmpty())
+    {
+        code += "namespace "+ nameSpace->text() + "{\n";
+    }
+
     // le constructeur
     if (genererConstructeur->isChecked())
     {
         code += nom->text() + "::" + nom->text() + "()\n{\n\n}\n\n";
     }
+    // le destructeur
     if (genererDestructeur->isChecked())
     {
         code += nom->text() + "::~" + nom->text() + "()\n{\n\n}\n\n";
     }
+    // les methodes get/set
     for (unsigned int i=0; i < attributs.size(); i++)
     {
         if(attributs[i].getMethode() == "Get" || attributs[i].getMethode() =="Get/Set")
@@ -193,6 +213,10 @@ QString FenetrePrincipale::genererCpp()
             code += "void set" + attributs[i].getNom() + "(" + attributs[i].getType() + " _" + attributs[i].getNom() + ")\n{\n    " + attributs[i].getNom() + " = _" + attributs[i].getNom() + ";\n}\n\n";
     }
 
+    if (!nameSpace->text().isEmpty())
+    {
+        code += "}\n";
+    }
     return code;
 }
 

@@ -24,6 +24,7 @@ class FenetrePrincipale : public QWidget
     private:
         QLineEdit *nom;
         QLineEdit *classeMere;
+        QLineEdit *nameSpace;
         QCheckBox *protections;
         QCheckBox *genererConstructeur;
         QCheckBox *genererDestructeur;
